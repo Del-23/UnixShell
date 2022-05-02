@@ -28,6 +28,7 @@ void redirectOut(char *fileName)
  * Identifies if a character is one of the listed symbols.
  * 
  * @param c char character to be verified as a match or not to the listed symbols
+ * @returns boolean indicator of finding at least one listed symbol
  */
 int separator (char c)
 {
@@ -76,18 +77,25 @@ void split(char *string, char*** tokens, char** separators)
     (*separators)[numSeparators++] = 0; //end-of-separators marker to use as delimiter
 }
 
+/**
+ * Identifies the position of the times-th NULL.
+ * 
+ * @param command the input
+ * @param times variable that counts how many times a NULL appears after the input has been parsed
+ * @returns position of the times-th NULL in the vector
+ */
 int positionNull(char **command, int times)
 {
     int i = 0;
     int wasNull = 0;
 
-    while (wasNull != times) //while the number of times NULL appeared is 
+    while (wasNull != times) //while the number of times NULL appeared is less than expected
     {
         if(command[i] == NULL)
             wasNull++;
         i++;
     }
-    return i-1;
+    return i-1; //return position of the times-th NULL entry
 }
 
 /**
@@ -100,12 +108,12 @@ void createPipe(char *args[])
     int fd[2];
     pipe(fd);
 
-    dup2(fd[1], 1);
+    dup2(fd[1], 1); //changes stdout to the piped output descriptor (fd[1])
     close(fd[1]);
 
-    run(args);
+    run(args); //run command of the left side of the pipe
 
-    dup2(fd[0], 0);
+    dup2(fd[0], 0); //changes stdin to the piped input descriptor (fd[0])
     close(fd[0]);
 }
 
@@ -120,7 +128,7 @@ void run(char *args[])
 
     pid = fork();
     if (pid < 0) { 
-        fprintf(stderr, "Failed to initialize forked process");
+        fprintf(stderr, "Failed to initialize forked process"); 
     }
     else if ( pid == 0) { /* child process */
         execv(args[0], args);
@@ -128,6 +136,6 @@ void run(char *args[])
     else { /* parent process */
         waitpid(pid, NULL, 0);
     }
-    redirectIn("/dev/tty");
-    redirectOut("/dev/tty");
+    redirectIn("/dev/tty"); //returning stdin to the original file descriptor
+    redirectOut("/dev/tty"); //returning stdout to the original file descriptor
 }
