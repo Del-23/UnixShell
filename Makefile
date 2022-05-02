@@ -1,5 +1,6 @@
+
 all: main.c 
-	gcc -g -Wall -o main main.c
+	gcc -Wall *.c -o main
 
 clean: 
 	$(RM) main
