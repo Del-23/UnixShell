@@ -1,3 +1,6 @@
+#ifndef FUNCTIONS_HEADER
+#define FUNCTIONS_HEADER 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -19,4 +22,6 @@ void createPipe(char *args[]);
 
 void run(char *args[]);
 
+void catch_int(int sig_num);
 
+#endif
